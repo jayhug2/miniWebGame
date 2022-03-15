@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로또추첨기</title>
+  <style>
+    .ball{
+      display: inline-block;
+      border: 1px solid black;
+      border-radius : 20px;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 20px;
+      text-align : center;
+      margin-right: 20px;
+    }
+
+    #slt{
+      margin:0;
+      padding:0;
+      width:600px;
+      display: flex;
+      flex-flow: row wrap;
+      margin-top:100px;
+    }
+    .cknum{
+      width:30px;
+      height:50px;
+      border:1px solid black;
+      list-style:none;
+      margin: 0 5px 5px 0;
+    }
+    .sltnum{
+      background-color: black;
+      color: white;
+    }
+    div{
+      height:100px;
+      line-height:100px;
+    }
+  </style>
+</head>
+<body>
+  <div id="lotto">당첨:</div>
+  <div id="bonus">보너스:</div>
+  <ul id="slt"></ul>
+  <button id="btn">구입!</button>
+  <script>
+    const $result = document.querySelector("#lotto");
+    const $bonus = document.querySelector("#bonus");
+    const $check = document.querySelector("#slt");
+    const $btn = document.querySelector("#btn");
+    const shuffle = [];
+    const myslt = [];
+
+
+
+    const lottock = (e) => {
+      let i =  myslt.indexOf(parseInt(e.target.textContent));
+      if(i !== -1){
+        myslt.splice(i,1);
+      } else {
+        myslt.push(parseInt(e.target.textContent));
+      }
+      e.target.classList.toggle("sltnum");
+    }
+
+    const resultck = () => {
+      if(myslt.length<6 || myslt.length>6){
+        alert("6개의 번호를 체크하세요");
+        return;
+      }
+      
+      let wins = 0;
+      const bonuswin = myslt.indexOf(bonus);
+      for(let i = 0; i<myslt.length; i++){
+        const win = winBalls.indexOf(myslt[i]);
+        if(win!== -1){
+          wins++;
+        }
+      }
+      winresult(wins,bonuswin);
+    }
+
+    const winresult = (wins,bns) => {
+      if(wins < 3){
+        console.log("꽝!!")
+      }
+      else if(wins===3){
+        console.log("5등 5천원 당첨!!");
+      }
+      else if(wins===4){
+        console.log("4등 5만원 당첨!!");
+      }
+      else if(wins===5){
+        if(bns===1){
+          console.log("2등 6천만원 당첨!!");
+        }
+        console.log("3등 1백만원 당첨!!");
+      }
+      else if(wins===6){
+        console.log("1등!! 인생역전!!");
+      }
+    }
+
+    $btn.addEventListener("click",resultck);
+
+
+    const candidate = Array(45).fill().map((el,i) => { return i+1 });
+    let i = 1;
+    while(candidate.length > 0){
+      const $numlist = document.createElement("li");
+      $numlist.className="cknum";
+      $numlist.textContent = i++;
+      $numlist.addEventListener("click",lottock);
+      $check.appendChild($numlist);
+
+      const random = Math.floor(Math.random() * candidate.length);
+      const spliceArray = candidate.splice(random,1);
+      const value = spliceArray[0];
+      shuffle.push(value);
+    }
+    const winBalls = shuffle.slice(0,6).sort((a, b) => a-b);
+    const bonus = shuffle[6];
+    
+    
+    const colorize = (num,$tag) => {
+      if(num<10) {
+        $tag.style.backgroundColor = "red";
+        $tag.style.color = "#eee";
+      }
+      else if(num < 20) {
+        $tag.style.backgroundColor = "yellow";
+      }
+      else if(num < 30) {
+        $tag.style.backgroundColor = "blue";
+        $tag.style.color = "#eee";
+      }
+      else if(num < 40) {
+        $tag.style.backgroundColor = "green";
+        $tag.style.color = "#eee";
+      }
+      else {
+        $tag.style.backgroundColor = "orange";
+      }
+    }
+    
+    
+    
+
+
+    const showBall = (num,tar) => {
+      const $ball = document.createElement("div");
+      $ball.className = "ball";
+      $ball.textContent = num;
+      colorize(num,$ball);
+      tar.appendChild($ball);
+    }
+    winBalls.map((item, index) => {
+      setTimeout(() => {
+        showBall(item,$result);
+      },(index+1)*1000)
+    });
+    setTimeout(() => {
+      showBall(bonus,$bonus);
+    },7000)
+
+  </script>
+</body>
+</html>
