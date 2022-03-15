@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>반응속도 측정</title>
+  <style>
+    #screen {
+      width: 400px;
+      height: 300px;
+      margin: 0 auto;
+      color: white;
+      text-align: center;
+    }
+    #screen.waiting{
+      background-color: cornflowerblue;
+    }
+    #screen.ready {
+      background-color: red;
+    }
+    #screen.now {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+  <div id="screen" class="waiting">클릭해서 시작하세요</div>
+  
+  <script>
+    const $screen = document.querySelector("#screen");
+    
+    let timer;
+    let startTime;
+    let endTime;
+    const resultEverage = [];
+    $screen.addEventListener("click", (e) => {
+      if(e.target.classList.contains("waiting")){
+        e.target.classList.remove("waiting");
+        e.target.classList.add("ready");
+        $screen.textContent = "초록색 화면이 나타나면 클릭하세요";
+        timer = setTimeout(() => {
+          e.target.classList.remove("ready");
+          e.target.classList.add("now");
+          startTime = new Date();
+        },Math.ceil(Math.random()*6000)+2000);
+      } else if(e.target.classList.contains("ready")) {        
+        $screen.textContent = "너무 빨리 클릭했습니다/ 클릭해서 다시 측정하기";
+        clearTimeout(timer);
+        e.target.classList.remove("ready");
+        e.target.classList.add("waiting");
+        
+      } else if(e.target.classList.contains("now")) {
+        endTime = new Date();
+        resultEverage.push(endTime-startTime);
+        $screen.textContent = `${endTime - startTime}ms, 평균 ${parseInt(resultEverage.reduce((a,c) => (a+c))/resultEverage.length)}ms/ 클릭해서 다시 측정하기`;
+        e.target.classList.remove("now");
+        e.target.classList.add("waiting");
+      }
+    });
+  </script>
+</body>
+</html>
