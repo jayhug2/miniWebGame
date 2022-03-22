@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    table{
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+    td{
+      border: 1px solid black;
+      width:100px;
+      height: 100px;
+      text-align: center;
+      font-size:50px
+    }
+    div{
+      margin: 0 auto;
+      width: 300px;
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    //게임표 생성
+    const $body = document.body;
+    const $table = document.createElement("table");
+    const $result = document.createElement("div");
+    const rows = [];
+    let marking = "O";
+    for(let i = 0; i < 3; i++ ) {
+      const $tr = document.createElement("tr");
+      const cell = []
+      $table.append($tr);
+      for(let j = 0; j < 3; j++) {
+        const $td = document.createElement("td");
+        $tr.append($td);
+        cell.push($td);
+      }
+      rows.push(cell);
+    }
+    $body.append($table);
+    $body.append($result);
+
+  
+    //승자 체킹
+    const checkWin = (target) => {
+      const rowIndex = target.parentNode.rowIndex;
+      const cellIndex = target.cellIndex;
+      let hasWinner = false;
+      console.log(rows[rowIndex][0].textContent, marking)
+      if( rows[rowIndex][0].textContent===marking &&
+          rows[rowIndex][1].textContent===marking &&
+          rows[rowIndex][2].textContent===marking){
+            hasWinner = true;
+          };
+      if( rows[0][cellIndex].textContent===marking &&
+          rows[1][cellIndex].textContent===marking &&
+          rows[2][cellIndex].textContent===marking){
+            hasWinner = true;
+          };
+      if( rows[0][0].textContent===marking &&
+          rows[1][1].textContent===marking &&
+          rows[2][2].textContent===marking){
+            hasWinner = true;
+          };
+      if( rows[0][2].textContent===marking &&
+          rows[1][1].textContent===marking &&
+          rows[2][0].textContent===marking){
+            hasWinner = true;
+          };
+      return hasWinner;
+    }
+
+    //승패결과
+    const winnerAndDraw = (target) => {
+      const winner = checkWin(target);
+      const draw = rows.flat().every((cell) => cell.textContent);
+      //승자가 있을 경우
+      if(winner){
+        $result.textContent = `${marking}님의 승리`
+        $table.removeEventListener("click",slt_td);
+        return;
+      } else if(draw) {//승자가 없을 경우
+        $result.textContent = "무승부"
+        $table.removeEventListener("click",slt_td);
+        return;
+      }
+      marking = (marking==="X" ? "O" : "X");
+    }
+
+     //원하는칸을 클릭할 경우
+    let clickable = true;
+    const slt_td = (e) => {
+      if(!clickable){
+        return;
+      }
+      //빈칸이 아닐 경우
+      if(e.target.textContent !== ""){
+        alert("빈 칸을 클릭해주세요")
+        return
+      }
+      //빈칸인 경우
+      e.target.textContent = marking;
+      winnerAndDraw(e.target);
+
+      //컴퓨터 턴
+      if(marking === "X"){
+        const emptyCell = rows.flat().filter((v) => !v.textContent);
+        const randomCell = emptyCell[Math.floor(Math.random() * emptyCell.length)];
+        clickable = false;
+        setTimeout(() => {
+          randomCell.textContent = "X";
+          winnerAndDraw(randomCell);
+          clickable = true;
+        },1000)
+      }
+    }
+    $table.addEventListener("click", slt_td)
+    
+  </script>
+</body>
+</html>  
